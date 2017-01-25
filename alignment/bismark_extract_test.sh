@@ -12,17 +12,17 @@
 #SBATCH --mail-user=ilee29@jhu.edu
 
 ###load module
-module load perl
 module load samtools
 ###execute
-wdir=$PWD
+
 outdir=${2}
 bismarkpath=/home-2/ilee29@jhu.edu/Code/Bismark
 refpath=/scratch/groups/wtimp1/Reference/chicken/galGal5cln
+bampath=`ls ${outdir}/*${1}*pe.bam`
 
 ${bismarkpath}/bismark_methylation_extractor -p --multicore 8 --gzip \
     --genome_folder ${refpath} \
-    ${outdir}/${1}.full.bam -o ${outdir} --no_header
+    ${bampath} -o ${outdir} --no_header
 
 
 

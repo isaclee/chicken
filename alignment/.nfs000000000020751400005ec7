@@ -1,0 +1,13 @@
+
+ *** Bismark methylation extractor version v0.17.0 ***
+
+Setting option '--no_overlap' since this is (normally) the right thing to do for paired-end data
+
+Summarising Bismark methylation extractor parameters:
+===============================================================
+Bismark paired-end SAM format specified (default)
+Number of cores to be used: 8
+Output path specified as: /scratch/groups/wtimp1/170119_chicken/aligned//ACTTGA/
+
+Checking file >>/scratch/groups/wtimp1/170119_chicken/aligned//ACTTGA/ACTTGA.full.bam<< for signs of file truncation...
+slurmstepd: error: *** JOB 10800500 ON compute0013 CANCELLED AT 2017-01-23T16:13:40 ***

@@ -1,0 +1,4 @@
+rm: cannot remove `/scratch/users/ilee29@jhu.edu/tmp/5_ACTTGA/*': No such file or directory
+No quality encoding type selected. Assuming that the data provided uses Sanger encoded Phred scores (default)
+
+Path to Cutadapt set as: 'cutadapt' (default)
