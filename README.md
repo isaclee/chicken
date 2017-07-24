@@ -8,12 +8,11 @@ Data is available in NCBI BioProject under the accession number [PRJNA389197] UR
 | --- | --- | --- |
 | Trim Galore! | 0.4.1 | http://www.bioinformatics.babraham.ac.uk/projects/trim_galore/  |
 | Bismark | 0.16.3 | http://www.bioinformatics.babraham.ac.uk/projects/bismark/ |
-| bsseq | 1.12.1
-| https://bioconductor.org/packages/release/bioc/html/bsseq.html |
+| bsseq | 1.12.1 | https://bioconductor.org/packages/release/bioc/html/bsseq.html |
 ## Data analysis code
 Code used for all of the quality assessment and data analysis steps are available in each of the scripts below.
 1. [Quality assessment](QC/chicken_fastqQC.sh)
 1. [Adaptor and end-trimming with Trim Galore!](alignment/trim.sh)
 1. [Alignment with Bismark](alignment/bismark_align.sh)
 1. [Methylation bias plotting](QC/plotMbias.R)
-1. [Methylation Analysis] (analysis/)
+1. [Methylation Analysis](analysis/)
