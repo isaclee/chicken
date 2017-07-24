@@ -2,7 +2,7 @@ This repository contains code used for quality control and data analysis present
 > **Lee I, Rasoul B, Holub AS, Lejeune A, Enke RA,Timp W. Whole genome DNA methylation sequencing of the chicken retina, cornea and brain. _Scientific Data_ 2017.**
 ----
 ## Data availability
-Data is available in NCBI BioProject under the accession number [PRJNA389197] URL here: https://www.ncbi.nlm.nih.gov/bioproject/389197 ). 
+Data is available in NCBI BioProject under the accession number [PRJNA389197] URL here: https://www.ncbi.nlm.nih.gov/bioproject/389197 
 ## Software used
 | Software | Version | URL | 
 | --- | --- | --- |
