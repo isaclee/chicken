@@ -30,7 +30,7 @@ meth = totmeth[idx,]
 ##correlation
 meth.order = meth[,c("E8retina1","E8retina2","E8retina3","E18retina1","E18retina2","E18retina3","E18brain1","E18brain2","E18brain3","E18cornea1","E18cornea2","E18cornea3")]
 m.cor = cor(meth.order,method="pearson")
-##b/w sample correlation
+##b/w tissue correlation
 pheno=pData(bismark)$pheno
 upheno = unique(pheno)
 meth.av = matrix(nrow=nrow(meth),ncol=length(upheno))

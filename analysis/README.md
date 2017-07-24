@@ -5,6 +5,8 @@ chickenBsseqPreproc.R
 then merge:
 chickenBsseqMerge.R
 Then PCA and distance matrix analysis for validation:
+chickenDendrogram.R saves the part with significant methylation
 chickenBsseqValidate.R
 Then DMR and block detection:
 chickenBsseqDMRs.R
+
