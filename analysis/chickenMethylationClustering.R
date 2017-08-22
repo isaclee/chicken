@@ -27,6 +27,41 @@ totcov = getCoverage(bismark,type="Cov",what="perBase")
 idx = which(rowSums(totcov>=2)==12)
 meth = totmeth[idx,]
 
+##correlation
+meth.order = meth[,c("E8retina1","E8retina2","E8retina3","E18retina1","E18retina2","E18retina3","E18brain1","E18brain2","E18brain3","E18cornea1","E18cornea2","E18cornea3")]
+m.cor = cor(meth.order,method="pearson")
+##b/w sample correlation
+pheno=pData(bismark)$pheno
+upheno = unique(pheno)
+meth.av = matrix(nrow=nrow(meth),ncol=length(upheno))
+for (i in seq(upheno)){
+    meth.av[,i]=rowMeans(meth[,which(pheno==upheno[i])])
+}
+colnames(meth.av)=upheno
+meth.av = meth.av[,c("E8retina","E18retina","E18brain","E18cornea")]
+phen.cor = cor(meth.av,method="pearson")
+##plot?
+getLower=function(mat){
+    mat[lower.tri(mat)]=NA
+    return(mat)
+}
+mcor.low=getLower(m.cor)
+phencor.low=getLower(phen.cor)
+m.cor.mlt = melt(mcor.low,na.rm=TRUE)
+phen.cor.mlt=melt(phencor.low)
+
+g.mcor = ggplot(data=m.cor.mlt,aes(x=X2,y=X1,fill=value))+
+    geom_tile(color="white")+
+    scale_fill_gradient2(low="white",high="red",name="Pearson Correlation")+
+    coord_fixed()+
+#    geom_text(aes(label=value),color="black")+
+    theme_minimal()
+
+pdf(file.path(plotdir,"correlationPlot.pdf"),width=4,height=4)
+print(g.mcor)
+dev.off()
+
+
 #perform PCA
 meth.t = t(meth)
 meth.pca = prcomp(meth.t,center=TRUE,retx=TRUE)

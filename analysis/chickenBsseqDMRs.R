@@ -10,7 +10,7 @@ rdadir=file.path(datdir,"rdas")
 ##Load libraries and sources
 require(Biostrings)
 require(plyr)
-require(ggplot2)
+require(ggplot1)
 require(bsseq)
 require(reshape)
 require(GenomicRanges)

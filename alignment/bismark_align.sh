@@ -1,23 +1,18 @@
 #!/bin/bash
 
-trimpath=/home/isac/Code/trim_galore_zip/trim_galore
-bismarkpath=/home/isac/Code/Bismark
-
-refpath=/atium/Data/Reference/chicken/galGal5cln
-rawdir=/mithril/Data/NGS/Raw/150415_HiSeqNorwayChicken/wtimp1_118512/FASTQ
+#path of bismark software
+bismarkpath=/home-2/ilee29@jhu.edu/Code/Bismark
+#path of the reference genome
+refpath=/scratch/groups/wtimp1/Reference/chicken/galGal5cln
+#path of the output bam files
 outdir=${3}
-tmpdir=/scratch/tmp
-
+#path of the temporary directory (here it's the input trimmed files)
+tmpdir=/scratch/users/ilee29@jhu.edu/tmp
+#sample tag
 lanesamp=${1}_${2}
 
 mkdir ${tmpdir}/${lanesamp}
 rm ${tmpdir}/${lanesamp}/*
-
-fastq1=`ls ${rawdir}/C6HRUANXX_${lanesamp}_1.fastq.gz`
-fastq2=`ls ${rawdir}/C6HRUANXX_${lanesamp}_2.fastq.gz`
-
-${trimpath} --paired ${fastq1} ${fastq2} \
-    -o ${tmpdir}/${lanesamp}
 
 trim1=`ls ${tmpdir}/${lanesamp}/*val_1.fq.gz`
 trim2=`ls ${tmpdir}/${lanesamp}/*val_2.fq.gz`

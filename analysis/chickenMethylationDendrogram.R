@@ -44,22 +44,59 @@ colnames(totmeth) = rownames(pData)
 meth = totmeth[idx,]
 loc = granges(bismark)[idx]
 
+##SAVE the BS objects with significant coverage
+if (T){
+BSsig.small = BS.fit.small[idx]
+BSsig.large = BS.fit.large[idx]
+BSsig=bismark[idx]
+save(list=c("BSsig","BSsig.small","BSsig.large"),file=file.path(procroot,"BSsig.rda"))
+} 
+##distance matrix
 distance = dist(t(meth))
 clusters = hclust(distance)
+
+##function for only lookin at triangles
+# Get lower triangle of the correlation matrix
+Lowertri<-function(cormat){
+    cormat[upper.tri(cormat)] <- NA
+    return(cormat)
+}
+Uppertri <- function(cormat){
+    cormat[lower.tri(cormat)]<- NA
+    return(cormat)
+}
 
 dist.mat = as.matrix(distance)
 idx=order(rownames(dist.mat))
 idx = match(labels(as.dendrogram(clusters)),rownames(dist.mat))
 heat.mat = dist.mat[idx,idx]
-
 rownames(heat.mat)=colnames(heat.mat)=seq(length(heat.mat[,1]))
-dist.melt = melt(heat.mat)
+heatmat.up=Uppertri(heat.mat)
+dist.melt = melt(heatmat.up,na.rm=TRUE)
+
+##pearson correlation
+meth.order=meth[,labels(as.dendrogram(clusters))]
+meth.cor=cor(meth.order,method="pearson")
+rownames(meth.cor)=colnames(meth.cor)=seq(length(heat.mat[,1]))
+methcor.low=round(Lowertri(meth.cor),2)
+cor.melt=melt(methcor.low,na.rm=TRUE)
+
 
 q = ggplot(dist.melt,aes(x=X1,y=X2))+geom_tile(aes(fill=value))+
-    scale_fill_gradient(low="black",high="white")+theme_bw()+
-    theme(legend.position="none")
+    geom_text(data=cor.melt,aes(x=X1,X2,label=value,size=10),color="black")+
+    scale_fill_gradient(low="black",high="white",na.value="transparent")+
+    theme_bw()+coord_fixed()+
+    theme(legend.position="none",
+          panel.grid.major=element_blank(),
+          panel.grid.minor=element_blank(),
+          panel.border=element_blank(),
+          axis.ticks=element_blank(),
+          axis.title.x=element_blank(),
+          axis.text=element_blank(),
+          axis.title.y=element_blank())
 
 pdf(file.path(plotdir,"chicken_dendrogram.pdf"))
 plot(clusters)
 print(q)
 dev.off()
+ 
