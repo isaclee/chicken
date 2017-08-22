@@ -1,8 +1,0 @@
-This analysis directory contains the analysis of chicken data
-We should have data that has been QC'd, aligned, and extracted.
-First, data preprocessing:
-chickenBsseqPreproc.R
-Then PCA and distance matrix analysis for validation:
-chickenBsseqValidate.R
-Then DMR and block detection:
-chickenBsseqDMRs.R

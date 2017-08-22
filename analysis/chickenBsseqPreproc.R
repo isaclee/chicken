@@ -21,37 +21,19 @@ detectCores()
 if (TRUE) {
     bismark.samp.info=read.csv(file=file.path(procroot,"infotable.csv"),row.names=1,colClasses="character")
     bismark.samp.info$filepath=file.path(datdir, bismark.samp.info$sample, paste0(bismark.samp.info$sample, ".cyto.txt.gz"))
-    
-    bismark.all=read.bismark(files=bismark.samp.info$filepath,sampleNames=bismark.samp.info$label,fileType="cytosineReport",mc.cores=12,verbose=T)
-}
+    bismark.samp.info$pheno=paste0(bismark.samp.info$time,bismark.samp.info$type)
+    bismark=read.bismark(files=bismark.samp.info$filepath,sampleNames=bismark.samp.info$label,fileType="cytosineReport",mc.cores=12,verbose=T)
+    #transferring bismark.samp.info into the pData
+    for (x in colnames(bismark.samp.info)) bismark[[x]]=bismark.samp.info[,x]
 
-##subsetting
-if(T){
-    bismark=chrSelectBSseq(bismark.all,seqnames=c("chr1","chr2"),order=T) #chr1 is about 1/10 of the whole
 }
-
 
 ##
 if (TRUE) {
-    ## smoothing
-    ##from amy
-    ##prolly based on cancer as well for Block finding
+    ##smoothing for blocks
     BS.fit.large<-BSmooth(bismark,mc.cores=4,parallelBy="sample",verbose=TRUE,ns=500,h=20000)
-    ##kasper optimized based on cancer data dont got smaller than this cuz takes forever to smooth to get DMRs
-    BS.fit.small<-BSmooth(bismark.all,mc.cores=2,parallelBy="chromosomeo",verbose=TRUE,ns=20,h=1000)
-    save(list=c("bismark.samp.info","bismark", "BS.fit.large", "BS.fit.small"), file=file.path(datdir,"bsobject.rda"))
-}
-
-if (F) {
-
-    bismark.samp.info$pheno=paste(bismark.samp.info$type, bismark.samp.info$time, sep=".")
-
-    bismark.samp.info$col=factor(bismark.samp.info$pheno)
-    levels(bismark.samp.info$col)=c("blue", "red", "green", "orange")
-    
-    upheno=unique(bismark.samp.info$pheno)
-    
-    combos=data.frame(one=upheno[combn(4,2)[1,]], two=upheno[combn(4,2)[2,]])
-
-    combos$label=paste(combos$one, combos$two, sep=".v.")
+    ##smoothing for DMRs
+    ##optimized based on cancer data dont got smaller than this cuz takes forever to smooth to get DMRs
+    BS.fit.small<-BSmooth(bismark,mc.cores=2,parallelBy="sample",verbose=TRUE,ns=20,h=1000)
+    save(list=c("bismark", "BS.fit.large", "BS.fit.small"), file=file.path(datdir,"bsobject.rda"))
 }
