@@ -11,7 +11,7 @@ detectCores()
 if (T) {
     bismark.samp.info=read.csv(file=file.path(procroot,"infotable.csv"),row.names=1,colClasses="character")
     bismark.samp.info$filepath=file.path(datdir, bismark.samp.info$sample, paste0(bismark.samp.info$sample, ".cyto.txt.gz"))
-    bismark=read.bismark(files=bismark.samp.info$filepath,sampleNames=bismark.samp.info$label,fileType="cytosineReport",verbose=T)
+    bismark=read.bismark(files=bismark.samp.info$filepath,sampleNames=bismark.samp.info$label,fileType="cytosineReport",mc.cores=12,verbose=T)
 }
 
 ## smoothing
