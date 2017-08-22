@@ -43,11 +43,11 @@ fi
 
 cd ${rawdir}
 
-samppath=`ls *${samp}*`
+samppath=`ls ${samp}*`
 echo ${samppath}
 
 for sample in ${samppath}
 do
-    gunzip -c ${sample} | head -n ${num} | gzip > ${outdir}/${sample%.fastq.gz}_subset.fastq.gz
+    gunzip -c ${sample} | head -n ${num} | gzip > /${sample%.fastq.gz}_subset.fastq.gz
 done
 

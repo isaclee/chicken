@@ -12,7 +12,7 @@
 #SBATCH --mail-user=ilee29@jhu.edu
 
 ###load module
-module load R
+module load R/3.3.1
 
 ###execute
 

@@ -1,12 +1,9 @@
-##First set central code dir for sourcing
-codedir="~/Code/isac/chicken/meth"
-
 ##Plots go here:
-outdir="~/Dropbox/Data/Genetics/MethSeq/150415_chicken/"
+outdir="~/Dropbox/Data/Genetics/MethSeq/170120_chicken/"
 plotdir=file.path(outdir,"plots")
 
-##All alignment data lives here
-procroot="/mithril/Data/NGS/Aligned/150415_HiSeqChick"
+##All rdas live here
+procroot="/atium/Data/NGS/Aligned/170120_chicken/rdas"
 
 ##Gene data
 genedir="/mithril/homes/isac/Data/genes"
@@ -24,10 +21,6 @@ source("~/Code/timp_genetics/util/timp_seqtools.R")
 source("~/Code/timp_genetics/util/read_tools.R")
 source("~/Code/ilee/util/ilee_plot.R")
 
-require(doMC)
-registerDoMC()
-options(cores=4)
-
 # Load genes list
 # file is bed format
 #genes.comp= read.table(file=gzfile(genepath),sep="\t",header=F,stringsAsFactors=F)
@@ -38,22 +31,15 @@ options(cores=4)
 
 # Load bsseq.R file
 load(file=file.path(procroot,"bsobject.rda")) # bsobject has bismark,BS.fit.large,BS.fit.small
-load(file=file.path(procroot,"processed.rda"))# processed has blocks,dmrs,tstat.blocks,tstat.dmrs,combos,bismark.samp.info
+#load(file=file.path(procroot,"processed.rda"))# processed has blocks,dmrs,tstat.blocks,tstat.dmrs,combos,bismark.samp.info
 
 pData <- pData(BS.fit.small)
-pData$pheno = bismark.samp.info$pheno
-pData$col <- as.character(bismark.samp.info$col)
-
-pData(BS.fit.small) <- pData
-pData(BS.fit.large) <- pData
-
-combos
 
 # Tree diagram (heatmap dendrogram)
 # get the methylation values: refer to bsseq user guide
 totmeth = getMeth(BS.fit.small,type="smooth",what="perBase")
 totcov = getCoverage(bismark,type="Cov",what="perBase")
-idx = which(rowSums(totcov>=5)==12)
+idx = which(rowSums(totcov>=2)==12)
 colnames(totmeth) = rownames(pData)
 meth = totmeth[idx,]
 loc = granges(bismark)[idx]
@@ -62,6 +48,7 @@ distance = dist(t(meth))
 clusters = hclust(distance)
 
 dist.mat = as.matrix(distance)
+idx=order(rownames(dist.mat))
 idx = match(labels(as.dendrogram(clusters)),rownames(dist.mat))
 heat.mat = dist.mat[idx,idx]
 
@@ -71,7 +58,6 @@ dist.melt = melt(heat.mat)
 q = ggplot(dist.melt,aes(x=X1,y=X2))+geom_tile(aes(fill=value))+
     scale_fill_gradient(low="black",high="white")+theme_bw()+
     theme(legend.position="none")
-
 
 pdf(file.path(plotdir,"chicken_dendrogram.pdf"))
 plot(clusters)

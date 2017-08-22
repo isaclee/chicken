@@ -1,0 +1,56 @@
+[1] 12
+[read.bismark] Reading file '/atium/Data/NGS/Aligned/170120_chicken/ACTTGA/ACTTGA.cyto.txt.gz' ... [read.bismark] Reading file '/atium/Data/NGS/Aligned/170120_chicken/AGTCAA/AGTCAA.cyto.txt.gz' ... [read.bismark] Reading file '/atium/Data/NGS/Aligned/170120_chicken/AGTTCC/AGTTCC.cyto.txt.gz' ... [read.bismark] Reading file '/atium/Data/NGS/Aligned/170120_chicken/ATGTCA/ATGTCA.cyto.txt.gz' ... [read.bismark] Reading file '/atium/Data/NGS/Aligned/170120_chicken/CAGATC/CAGATC.cyto.txt.gz' ... [read.bismark] Reading file '/atium/Data/NGS/Aligned/170120_chicken/CCGTCC/CCGTCC.cyto.txt.gz' ... [read.bismark] Reading file '/atium/Data/NGS/Aligned/170120_chicken/CTTGTA/CTTGTA.cyto.txt.gz' ... [read.bismark] Reading file '/atium/Data/NGS/Aligned/170120_chicken/GATCAG/GATCAG.cyto.txt.gz' ... [read.bismark] Reading file '/atium/Data/NGS/Aligned/170120_chicken/GTCCGC/GTCCGC.cyto.txt.gz' ... [read.bismark] Reading file '/atium/Data/NGS/Aligned/170120_chicken/GGCTAC/GGCTAC.cyto.txt.gz' ... [read.bismark] Reading file '/atium/Data/NGS/Aligned/170120_chicken/GTGAAA/GTGAAA.cyto.txt.gz' ... [read.bismark] Reading file '/atium/Data/NGS/Aligned/170120_chicken/TAGCTT/TAGCTT.cyto.txt.gz' ... Read 0.0% of 22806026 rowsRead 7.4% of 22806026 rowsRead 0.0% of 22806026 rowsRead 0.0% of 22806026 rowsRead 0.0% of 22806026 rowsRead 0.0% of 22806026 rowsRead 0.0% of 22806026 rowsRead 0.0% of 22806026 rowsRead 0.0% of 22806026 rowsRead 0.0% of 22806026 rowsRead 0.0% of 22806026 rowsRead 0.0% of 22806026 rowsRead 0.0% of 22806026 rowsRead 14.5% of 22806026 rowsRead 7.0% of 22806026 rowsRead 7.1% of 22806026 rowsRead 7.1% of 22806026 rowsRead 7.0% of 22806026 rowsRead 6.4% of 22806026 rowsRead 6.7% of 22806026 rowsRead 6.8% of 22806026 rowsRead 6.7% of 22806026 rowsRead 6.7% of 22806026 rowsRead 6.7% of 22806026 rowsRead 6.7% of 22806026 rowsRead 21.2% of 22806026 rowsRead 13.7% of 22806026 rowsRead 13.8% of 22806026 rowsRead 13.8% of 22806026 rowsRead 13.7% of 22806026 rowsRead 13.4% of 22806026 rowsRead 12.9% of 22806026 rowsRead 13.5% of 22806026 rowsRead 13.3% of 22806026 rowsRead 13.3% of 22806026 rowsRead 13.4% of 22806026 rowsRead 13.4% of 22806026 rowsRead 27.9% of 22806026 rowsRead 20.4% of 22806026 rowsRead 20.4% of 22806026 rowsRead 20.4% of 22806026 rowsRead 20.4% of 22806026 rowsRead 20.0% of 22806026 rowsRead 20.2% of 22806026 rowsRead 19.5% of 22806026 rowsRead 20.0% of 22806026 rowsRead 20.0% of 22806026 rowsRead 20.1% of 22806026 rowsRead 20.1% of 22806026 rowsRead 34.5% of 22806026 rowsRead 27.1% of 22806026 rowsRead 27.1% of 22806026 rowsRead 27.1% of 22806026 rowsRead 27.1% of 22806026 rowsRead 26.7% of 22806026 rowsRead 26.8% of 22806026 rowsRead 26.1% of 22806026 rowsRead 26.7% of 22806026 rowsRead 27.1% of 22806026 rowsRead 26.8% of 22806026 rowsRead 26.7% of 22806026 rowsRead 44.0% of 22806026 rowsRead 33.8% of 22806026 rowsRead 38.0% of 22806026 rowsRead 37.0% of 22806026 rowsRead 38.4% of 22806026 rowsRead 35.0% of 22806026 rowsRead 50.6% of 22806026 rowsRead 33.5% of 22806026 rowsRead 33.8% of 22806026 rowsRead 43.7% of 22806026 rowsRead 33.5% of 22806026 rowsRead 33.5% of 22806026 rowsRead 45.0% of 22806026 rowsRead 40.5% of 22806026 rowsRead 33.3% of 22806026 rowsRead 32.8% of 22806026 rowsRead 41.7% of 22806026 rowsRead 44.7% of 22806026 rowsRead 40.5% of 22806026 rowsRead 40.2% of 22806026 rowsRead 40.3% of 22806026 rowsRead 40.2% of 22806026 rowsRead 51.7% of 22806026 rowsRead 50.3% of 22806026 rowsRead 57.4% of 22806026 rowsRead 48.4% of 22806026 rowsRead 39.5% of 22806026 rowsRead 40.0% of 22806026 rowsRead 47.2% of 22806026 rowsRead 51.4% of 22806026 rowsRead 47.2% of 22806026 rowsRead 46.8% of 22806026 rowsRead 46.9% of 22806026 rowsRead 47.0% of 22806026 rowsRead 58.4% of 22806026 rowsRead 55.1% of 22806026 rowsRead 46.7% of 22806026 rowsRead 46.2% of 22806026 rowsRead 64.0% of 22806026 rowsRead 53.9% of 22806026 rowsRead 57.0% of 22806026 rowsRead 58.1% of 22806026 rowsRead 53.9% of 22806026 rowsRead 53.5% of 22806026 rowsRead 53.6% of 22806026 rowsRead 53.7% of 22806026 rowsRead 65.1% of 22806026 rowsRead 61.8% of 22806026 rowsRead 70.6% of 22806026 rowsRead 63.8% of 22806026 rowsRead 53.4% of 22806026 rowsRead 52.9% of 22806026 rowsRead 60.6% of 22806026 rowsRead 64.8% of 22806026 rowsRead 60.1% of 22806026 rowsRead 60.6% of 22806026 rowsRead 60.3% of 22806026 rowsRead 60.3% of 22806026 rowsRead 68.4% of 22806026 rowsRead 77.3% of 22806026 rowsRead 70.4% of 22806026 rowsRead 71.8% of 22806026 rowsRead 60.1% of 22806026 rowsRead 59.6% of 22806026 rowsRead 67.3% of 22806026 rowsRead 71.4% of 22806026 rowsRead 66.6% of 22806026 rowsRead 67.3% of 22806026 rowsRead 67.0% of 22806026 rowsRead 67.0% of 22806026 rowsRead 75.1% of 22806026 rowsRead 66.7% of 22806026 rowsRead 77.1% of 22806026 rowsRead 84.0% of 22806026 rowsRead 66.5% of 22806026 rowsRead 74.0% of 22806026 rowsRead 78.5% of 22806026 rowsRead 78.5% of 22806026 rowsRead 78.1% of 22806026 rowsRead 79.1% of 22806026 rowsRead 79.1% of 22806026 rowsRead 78.9% of 22806026 rowsRead 83.9% of 22806026 rowsRead 81.8% of 22806026 rowsRead 73.6% of 22806026 rowsRead 90.6% of 22806026 rowsRead 73.2% of 22806026 rowsRead 84.7% of 22806026 rowsRead 85.8% of 22806026 rowsRead 85.2% of 22806026 rowsRead 85.8% of 22806026 rowsRead 80.7% of 22806026 rowsRead 85.2% of 22806026 rowsRead 85.6% of 22806026 rowsRead 80.2% of 22806026 rowsRead 90.5% of 22806026 rowsRead 97.3% of 22806026 rowsRead 88.4% of 22806026 rowsRead 92.5% of 22806026 rowsRead 91.8% of 22806026 rowsRead 92.5% of 22806026 rowsRead 79.9% of 22806026 rowsRead 91.8% of 22806026 rowsRead 92.3% of 22806026 rowsRead 87.4% of 22806026 rowsRead 91.2% of 22806026 rowsRead 22806026 rows and 7 (of 7) columns from 0.574 GB file in 00:00:20
+Read 95.1% of 22806026 rowsRead 86.9% of 22806026 rowsRead 97.6% of 22806026 rowsRead 99.1% of 22806026 rowsRead 86.6% of 22806026 rowsRead 99.2% of 22806026 rowsRead 98.9% of 22806026 rowsRead 94.1% of 22806026 rowsRead 98.5% of 22806026 rowsRead 98.5% of 22806026 rowsRead 98.2% of 22806026 rowsRead 22806026 rows and 7 (of 7) columns from 0.574 GB file in 00:00:21
+Read 99.4% of 22806026 rowsRead 22806026 rows and 7 (of 7) columns from 0.574 GB file in 00:00:21
+Read 22806026 rows and 7 (of 7) columns from 0.574 GB file in 00:00:21
+Read 22806026 rows and 7 (of 7) columns from 0.574 GB file in 00:00:21
+Read 22806026 rows and 7 (of 7) columns from 0.574 GB file in 00:00:21
+Read 22806026 rows and 7 (of 7) columns from 0.574 GB file in 00:00:21
+Read 22806026 rows and 7 (of 7) columns from 0.574 GB file in 00:00:21
+Read 22806026 rows and 7 (of 7) columns from 0.576 GB file in 00:00:21
+Read 22806026 rows and 7 (of 7) columns from 0.574 GB file in 00:00:21
+Read 22806026 rows and 7 (of 7) columns from 0.574 GB file in 00:00:21
+Read 93.9% of 22806026 rowsRead 22806026 rows and 7 (of 7) columns from 0.574 GB file in 00:00:22
+done in 180.7 secs
+done in 184.8 secs
+done in 186.1 secs
+done in 186.9 secs
+done in 188.1 secs
+done in 188.4 secs
+done in 189.6 secs
+done in 190.2 secs
+done in 190.4 secs
+done in 190.5 secs
+done in 190.8 secs
+done in 190.9 secs
+[read.bismark] Joining samples ... done in 70.6 secs
+[BSmooth] preprocessing ... done in 7.2 sec
+[BSmooth] smoothing by 'sample' (mc.cores = 4, mc.preschedule = FALSE)
+[BSmooth] sample E18cornea5 (out of 12), done in 363.1 sec
+[BSmooth] sample E18cornea4 (out of 12), done in 369.1 sec
+[BSmooth] sample E8retina2 (out of 12), done in 375.8 sec
+[BSmooth] sample E18cornea3 (out of 12), done in 390.2 sec
+[BSmooth] sample E8retina1 (out of 12), done in 371.9 sec
+[BSmooth] sample E18brain1 (out of 12), done in 390.6 sec
+[BSmooth] sample E18retina3 (out of 12), done in 389.3 sec
+[BSmooth] sample E8retina3 (out of 12), done in 383.0 sec
+[BSmooth] sample E18brain2 (out of 12), done in 362.7 sec
+[BSmooth] sample E18brain3 (out of 12), done in 359.0 sec
+[BSmooth] sample E18retina2 (out of 12), done in 391.7 sec
+[BSmooth] sample E18retina1 (out of 12), done in 385.8 sec
+[BSmooth] smoothing done in 1159.8 sec
+[BSmooth] preprocessing ... done in 7.6 sec
+[BSmooth] smoothing by 'sample' (mc.cores = 2, mc.preschedule = FALSE)
+[BSmooth] sample E8retina2 (out of 12), done in 4779.2 sec
+[BSmooth] sample E18cornea3 (out of 12), done in 4942.7 sec
+[BSmooth] sample E18cornea4 (out of 12), done in 4641.1 sec
+[BSmooth] sample E18cornea5 (out of 12), done in 4681.8 sec
+[BSmooth] sample E8retina1 (out of 12), done in 3487.1 sec
+[BSmooth] sample E18brain1 (out of 12), done in 4228.8 sec
+[BSmooth] sample E18retina3 (out of 12), done in 4427.8 sec
+[BSmooth] sample E8retina3 (out of 12), done in 4436.8 sec
+[BSmooth] sample E18retina2 (out of 12), done in 4650.0 sec
+[BSmooth] sample E18brain2 (out of 12), done in 4239.5 sec
+[BSmooth] sample E18brain3 (out of 12), done in 3874.6 sec
+[BSmooth] sample E18retina1 (out of 12), done in 3799.9 sec
+[BSmooth] smoothing done in 26369.9 sec
