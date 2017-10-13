@@ -5,7 +5,6 @@ plotdir=file.path(outdir,"plots")
 
 ##All alignment data lives here 
 datdir="/atium/Data/NGS/Aligned/170120_chicken"
-analysisdir=file.path(datdir,"analysis")
 rdadir=file.path(datdir,"rdas")
 ##Load libraries and sources
 library(tidyverse)
@@ -17,11 +16,9 @@ source("~/Code/timp_genetics/util/read_tools.R")
 
 library(parallel)
 
-##load Bsseq object R
-load(file=file.path(rdadir,"tstats.rda")) # bsobject has bismark,BS.fit.large,BS.fit.small
-
 ##find DMRs and blocks
 if (TRUE) {
+    load(file=file.path(rdadir,"tstats.rda")) # bsobject has bismark,BS.fit.large,BS.fit.small
     ##load processed.R if tstats have already been calculated
     dmrs=lapply(tstat.dmrs,
                 function(x){
@@ -31,30 +28,23 @@ if (TRUE) {
 #        blocks[[i]] <- dmrFinder(tb, qcutoff = c(0.1,0.9), stat="tstat", maxGap=1000)  #cutoff of 2 for large block finding, but the comparisons are skewed, so trying a low qcutoff (90% CI)
 }
 
-##write csv files of the dmrs
+### alternate data formats
 if (TRUE) {
-    load(file=file.path(rdadir,"processed.rda")) # processed has blocks, dmrs, tstat.blocks, tstat.dmrs, combos
-    csvdir = file.path(outdir,"csvs")
+    load(file=file.path(rdadir,"dmrs.rda"))
+    source("../util/timp_seqtools.R")
+    csvdir = file.path(datdir,"csv")
+    beddir=file.path(datdir,"bed")
+    wigdir=file.path(datdir,"wig")
     for (i in 1:6) {
-        #i = 1
-        write.csv(blocks[[i]], file.path(csvdir, paste0(combos$label[i], "_blocks.csv")))
-        write.csv(dmrs[[i]], file.path(csvdir, paste0(combos$label[i], "_dmrs.csv")))
+        ##write csv files of the dmrs
+        write.csv(dmrs[[i]], file.path(csvdir, paste0(combos$label[i], "_dmrs.csv")),quote=F)
+        ## bed
+        bsseqdmr2bed(dmrs[[i]], namey=paste0(combos$label[i], "_dmrs"),
+                     outdir=beddir)
     }
-}
-
-## write bed and wig of dmrs
-if (TRUE) {
-
-    source("~/Code/timp_genetics/util/timp_seqtools.R")
-    ##DMRS BED
-    for (i in 1:6) {
-        bsseqdmr2bed(dmrs[[i]], namey=paste0(combos$label[i], "_dmrs"), outdir=analysisdir)
-        bsseqdmr2bed(blocks[[i]], namey=paste0(combos$label[i], "_blocks"), outdir=analysisdir)        
-    }
-
-    ##Samples wig
+    ##wig
     for (i in 1:12) {
-        wig.bsseq(BS.fit.small[,i], filedir=analysisdir, modif=pData(bismark)$label[i], smooth=T)        
+        wig.bsseq(BS.fit.small[,i], filedir=wigdir,
+                  modif=pData(bismark)$label[i], smooth=T)
     }
-    
 }
