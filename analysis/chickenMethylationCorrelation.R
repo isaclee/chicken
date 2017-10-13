@@ -47,7 +47,6 @@ labs.o=labs[o]
 meth.o=meth[,o]
 colnames(meth.o)=labs.o
 meth.sub=meth[sample(1:nrow(meth.o),size=1000,replace=FALSE),]
-colnames(meth.sub)=labs.o
 meth.sub=as.data.frame(meth.sub)
 meth.av=matrix(nrow=nrow(meth.sub),ncol=length(upheno))
 for (i in seq(length(upheno))){
@@ -56,7 +55,7 @@ for (i in seq(length(upheno))){
 colnames(meth.av)=upheno
 meth.av=as.data.frame(meth.av)
     
-pdf(file.path(plotdir,"MethylationCorrelationPlot_all.pdf"),width=6,height=6)
+pdf(file.path(plotdir,"MethylationCorrelationPlot_all.pdf"),useDingbats=F,width=6,height=6)
 require(GGally)
 print(ggpairs(data=meth.av,ggplot2::aes(alpha=0.1),
               lower=list(continuous = wrap("points",alpha=0.2,size=0.5)))+

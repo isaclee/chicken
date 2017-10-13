@@ -54,6 +54,7 @@ idx = which(rowSums(totcov>=2)==12)
 colnames(totmeth) = rownames(pData)
 meth = totmeth[idx,]
 meth.loc=granges(BS.fit.small[idx])
+BSfit.sig=BS.fit.small[idx]
 
 ## average the methylations across replicates
 meth.phen=matrix(nrow=dim(meth)[1],ncol=length(upheno))
@@ -70,12 +71,23 @@ cpgovl = findOverlaps(meth.loc,cpg.gr)
 meth.gene=meth[queryHits(geneovl),]
 meth.cpg = meth[queryHits(cpgovl),]
 
+##per region average
+meth.gene=getMeth(BSfit.sig,regions=genes.gr,type="smooth",what="perRegion")
+meth.cpg=getMeth(BSfit.sig,regions=cpg.gr,type="smooth",what="perRegion")
+
+meth.g=na.omit(as.data.frame(meth.gene))
+meth.c=na.omit(as.data.frame(meth.cpg))
+
+demeth.frac=colSums(meth.c<0.2)/dim(meth.c)[1]
+write.table(x=demeth.frac,file=file.path(outdir,"CpGi_demethylation.csv"),quote=F,sep=",",col.names=F)
+
 ##plotting
-genebody.plt = melt(meth.gene)
-cpg.plt = melt(meth.cpg)
-colnames(genebody.plt)=colnames(cpg.plt)=c("pheno","samp","meth")
-genebody.plt$pheno=rep(pheno,each=dim(meth.gene)[1])
-cpg.plt$pheno=rep(pheno,each=dim(meth.cpg)[1])
+genebody.plt = melt(meth.g)
+cpg.plt = melt(meth.c)
+#colnames(genebody.plt)=colnames(cpg.plt)=c("pheno","samp","meth")
+genebody.plt$pheno=rep(pheno,each=dim(meth.g)[1])
+cpg.plt$pheno=rep(pheno,each=dim(meth.c)[1])
+colnames(genebody.plt)=colnames(cpg.plt)=c("samp","meth","pheno")
 cpg.sub=cpg.plt[sample(1:nrow(cpg.plt),500,replace=FALSE),]
 genebody.sub=genebody.plt[sample(1:nrow(genebody.plt),500,replace=FALSE),]
 g.body.box = ggplot(genebody.plt,aes(x=pheno,y=meth,group=samp,color=pheno))+
