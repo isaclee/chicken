@@ -11,35 +11,14 @@ rdadir=file.path(datdir,"rdas")
 cpganno="/atium/Data/Reference/chicken/galGal5/annotation/cpgIslandExt.txt.gz"
 ##Load libraries and sources
 require(Biostrings)
-require(plyr)
-require(ggplot2)
+require(tidyverse)
 require(bsseq)
-require(reshape)
 require(GenomicRanges)
-source("~/Code/timp_genetics/util/timp_seqtools.R")
-source("~/Code/timp_genetics/util/read_tools.R")
-
-library(parallel)
-library(ggjoy)
 
 ## load gene database
-#source("https://bioconductor.org/biocLite.R")
-#biocLite("TxDb.Ggallus.UCSC.galGal5.refGene")
-library(TxDb.Ggallus.UCSC.galGal5.refGene)
-ls('package:TxDb.Ggallus.UCSC.galGal5.refGene')
-chicken.txdb=TxDb.Ggallus.UCSC.galGal5.refGene
-
-## get annotation
-cpg.df = read.table(gzfile(cpganno))[,c(2:4)]
-colnames(cpg.df)=c("chr","start","end")
-cpg.gr = makeGRangesFromDataFrame(df=cpg.df)
-
-## get the gene info
-chick.cols=c("GENEID","TXCHROM","TXSTART","TXEND","TXSTRAND")
-chick.keytype="GENEID"
-chick.keys=keys(chicken.txdb,keytype=chick.keytype)
-chicken.genes=select(chicken.txdb,keys=chick.keys,columns=chick.cols,keytype=chick.keytype)
-genes.gr = GRanges(chicken.genes)
+dbpath="/mithril/Data/NGS/Reference/chicken5/chickendb.rda"
+load(dbpath)
+tx.gr
 
 ##load Bsseq object R
 load(file=file.path(rdadir,"bsobject.rda")) # bsobject has bismark,BS.fit.large,BS.fit.small
@@ -50,11 +29,12 @@ pheno = pd$pheno
 ## get methylation
 totmeth = getMeth(BS.fit.small,type="smooth",what="perBase")
 totcov = getCoverage(bismark,type="Cov",what="perBase")
-idx = which(rowSums(totcov>=2)==12)
-colnames(totmeth) = rownames(pData)
-meth = totmeth[idx,]
-meth.loc=granges(BS.fit.small[idx])
-BSfit.sig=BS.fit.small[idx]
+#idx = which(rowSums(totcov>=2)==12)
+meth = as.tibble(totmeth)
+meth.loc=granges(BS.fit.small)
+#### done up to this point ####
+
+
 
 ## average the methylations across replicates
 meth.phen=matrix(nrow=dim(meth)[1],ncol=length(upheno))

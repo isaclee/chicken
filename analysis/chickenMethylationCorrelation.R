@@ -39,7 +39,7 @@ pheno = pd$pheno
 labs=pd$label
 meth.loc=granges(BSsig)
 
-## I can just using the meth to plot right away
+## I can just use the meth to plot right away
 combo=combn(length(pheno),2)
 o=order(labs)
 pheno.o = pheno[o]
