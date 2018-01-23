@@ -7,6 +7,8 @@ plotdir=file.path(outdir,"plots")
 datdir="/atium/Data/NGS/Aligned/170120_chicken"
 analysisdir=file.path(datdir,"analysis")
 rdadir=file.path(datdir,"rdas")
+beddir=file.path(datdir,"bed")
+candidatedir=file.path(datdir,"genes")
 ##annotation
 cpganno="/atium/Data/Reference/chicken/galGal5/annotation/cpgIslandExt.txt.gz"
 ##Load libraries and sources
@@ -17,53 +19,60 @@ require(GenomicRanges)
 
 ## load gene database
 dbpath="/mithril/Data/NGS/Reference/chicken5/chickendb.rda"
+candidatepath=file.path(candidatedir,"170912_candidate_genes.txt")
+candidates=read_tsv(candidatepath,col_names=F)$X1
+
 load(dbpath)
 tx.gr
+upstream=5000
+region.gr=resize(tx.gr,width=width(tx.gr)+upstream,fix="end")
+
+candidate.gr=region.gr[na.omit(match(toupper(candidates),toupper(region.gr$ID)))]
+
+
+# load dmr bed files
+dmrfh=system(paste("find",beddir,"-type f"),intern=T)
+cnames=c("chr","start","end","score","strand")
+dmrs=lapply(bedfh,function(x){
+    y=read_tsv(x,col_names=F,skip=1)[,1:5]
+    names(y)=cnames;
+    GRanges(y)})
+dmrlabs=sapply(strsplit(sapply(strsplit(bedfh,"/"),"[[",8),"_"),"[[",1)
+dmrcomp=as.tibble(do.call(rbind,strsplit(bedlabs,".v.")))
+names(dmrcomp)=c("one","two")
+dmrcomp$lab=dmrlabs
 
 ##load Bsseq object R
 load(file=file.path(rdadir,"bsobject.rda")) # bsobject has bismark,BS.fit.large,BS.fit.small
 upheno=unique(pData(bismark)$pheno)
 pd = pData(bismark)
 pheno = pd$pheno
-
 ## get methylation
 totmeth = getMeth(BS.fit.small,type="smooth",what="perBase")
 totcov = getCoverage(bismark,type="Cov",what="perBase")
 #idx = which(rowSums(totcov>=2)==12)
-meth = as.tibble(totmeth)
-meth.loc=granges(BS.fit.small)
-#### done up to this point ####
+meth.gr=granges(BS.fit.small)
+meth.loc=as.tibble(meth.gr)[,c("seqnames","start")]%>%mutate(gloc=paste(seqnames,start,sep="_"))
+meth = bind_cols(meth.loc,as.tibble(totmeth))
+meth.gather=meth%>%gather(sample,meth,3:14)
+meth.gather$pheno=rep(pheno,each=dim(meth)[1])
 
+# get average per phenotype
+meth.pheno=meth.gather%>%
+    group_by(seqnames,start,pheno,gloc)%>%
+    summarize(meanmeth=mean(meth),
+              methstdev=sd(meth))
 
+##overlap methylation on candidate genes
+methovl=findOverlaps(candidate.gr,meth.gr)
+# overlap dmrs on candidate genes
+dmrovl=lapply(dmrs,function(x){findOverlaps(candidate.gr,x)})
 
-## average the methylations across replicates
-meth.phen=matrix(nrow=dim(meth)[1],ncol=length(upheno))
-colnames(meth.phen)=upheno
-for (i in seq(length(upheno))){
-    p = upheno[i]
-    ind = which(pheno==p)
-    meth.phen[,i]=rowMeans(meth[,ind])
-}
+plt=lapply(seq_along(candidate.gr),function(i){
+    gene=candidate.gr[i]$ID
+    meth.ind=subjectHits(methovl)[which(queryHits(methovl)==i)]
+    meth.gr[meth.ind]})
 
-##subset methylation on gene bodies
-geneovl=findOverlaps(meth.loc,genes.gr)
-cpgovl = findOverlaps(meth.loc,cpg.gr)
-meth.gene=meth[queryHits(geneovl),]
-meth.cpg = meth[queryHits(cpgovl),]
-
-##per region average
-meth.gene=getMeth(BSfit.sig,regions=genes.gr,type="smooth",what="perRegion")
-meth.cpg=getMeth(BSfit.sig,regions=cpg.gr,type="smooth",what="perRegion")
-
-meth.g=na.omit(as.data.frame(meth.gene))
-meth.c=na.omit(as.data.frame(meth.cpg))
-
-demeth.frac=colSums(meth.c<0.2)/dim(meth.c)[1]
-write.table(x=demeth.frac,file=file.path(outdir,"CpGi_demethylation.csv"),quote=F,sep=",",col.names=F)
-
-##plotting
-genebody.plt = melt(meth.g)
-cpg.plt = melt(meth.c)
 #colnames(genebody.plt)=colnames(cpg.plt)=c("pheno","samp","meth")
 genebody.plt$pheno=rep(pheno,each=dim(meth.g)[1])
 cpg.plt$pheno=rep(pheno,each=dim(meth.c)[1])
