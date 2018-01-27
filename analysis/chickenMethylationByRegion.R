@@ -17,6 +17,53 @@ require(tidyverse)
 require(bsseq)
 require(GenomicRanges)
 
+# Multiple plot function
+#
+# ggplot objects can be passed in ..., or to plotlist (as a list of ggplot objects)
+# - cols:   Number of columns in layout
+# - layout: A matrix specifying the layout. If present, 'cols' is ignored.
+#
+# If the layout is something like matrix(c(1,2,3,3), nrow=2, byrow=TRUE),
+# then plot 1 will go in the upper left, 2 will go in the upper right, and
+# 3 will go all the way across the bottom.
+#
+multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
+  library(grid)
+
+  # Make a list from the ... arguments and plotlist
+  plots <- c(list(...), plotlist)
+
+  numPlots = length(plots)
+
+  # If layout is NULL, then use 'cols' to determine layout
+  if (is.null(layout)) {
+    # Make the panel
+    # ncol: Number of columns of plots
+    # nrow: Number of rows needed, calculated from # of cols
+    layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),
+                    ncol = cols, nrow = ceiling(numPlots/cols))
+  }
+
+ if (numPlots==1) {
+    print(plots[[1]])
+
+  } else {
+    # Set up the page
+    grid.newpage()
+    pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
+
+    # Make each plot, in the correct location
+    for (i in 1:numPlots) {
+      # Get the i,j matrix positions of the regions that contain this subplot
+      matchidx <- as.data.frame(which(layout == i, arr.ind = TRUE))
+
+      print(plots[[i]], vp = viewport(layout.pos.row = matchidx$row,
+                                      layout.pos.col = matchidx$col))
+    }
+  }
+}
+
+
 ## load gene database
 dbpath="/mithril/Data/NGS/Reference/chicken5/chickendb.rda"
 candidatepath=file.path(candidatedir,"170912_candidate_genes.txt")
@@ -25,82 +72,86 @@ candidates=read_tsv(candidatepath,col_names=F)$X1
 load(dbpath)
 tx.gr
 upstream=5000
-region.gr=resize(tx.gr,width=width(tx.gr)+upstream,fix="end")
+txregion.gr=resize(tx.gr,width=width(tx.gr)+upstream,fix="end")
 
-candidate.gr=region.gr[na.omit(match(toupper(candidates),toupper(region.gr$ID)))]
+region.idx=na.omit(match(toupper(candidates),toupper(txregion.gr$ID)))
 
+region.gr=txregion.gr[region.idx]
+genes.gr=tx.gr[region.idx]
 
 # load dmr bed files
 dmrfh=system(paste("find",beddir,"-type f"),intern=T)
-cnames=c("chr","start","end","score","strand")
-dmrs=lapply(bedfh,function(x){
-    y=read_tsv(x,col_names=F,skip=1)[,1:5]
-    names(y)=cnames;
-    GRanges(y)})
-dmrlabs=sapply(strsplit(sapply(strsplit(bedfh,"/"),"[[",8),"_"),"[[",1)
-dmrcomp=as.tibble(do.call(rbind,strsplit(bedlabs,".v.")))
+dmrlabs=sapply(strsplit(sapply(strsplit(dmrfh,"/"),"[[",8),"_"),"[[",1)
+dmrcomp=as.tibble(do.call(rbind,strsplit(dmrlabs,".v.")))
 names(dmrcomp)=c("one","two")
 dmrcomp$lab=dmrlabs
+cnames=c("chr","start","end","score","strand")
+dmr.list=lapply(dmrfh,function(x){
+    y=read_tsv(x,col_names=F,skip=1)[,1:5]
+    names(y)=cnames
+    y$comp=strsplit(basename(x),"_")[[1]][1];y})
+dmrs=do.call(rbind,dmr.list)
+dmrs.gr=GRanges(dmrs)
 
 ##load Bsseq object R
 load(file=file.path(rdadir,"bsobject.rda")) # bsobject has bismark,BS.fit.large,BS.fit.small
-upheno=unique(pData(bismark)$pheno)
-pd = pData(bismark)
+bs=BS.fit.small
+rm(list=c("BS.fit.small","bismark","BS.fit.large"));gc()
+pd = pData(bs)
 pheno = pd$pheno
+upheno=unique(pheno)
+
 ## get methylation
-totmeth = getMeth(BS.fit.small,type="smooth",what="perBase")
-totcov = getCoverage(bismark,type="Cov",what="perBase")
-#idx = which(rowSums(totcov>=2)==12)
-meth.gr=granges(BS.fit.small)
-meth.loc=as.tibble(meth.gr)[,c("seqnames","start")]%>%mutate(gloc=paste(seqnames,start,sep="_"))
-meth = bind_cols(meth.loc,as.tibble(totmeth))
-meth.gather=meth%>%gather(sample,meth,3:14)
-meth.gather$pheno=rep(pheno,each=dim(meth)[1])
+meth.tot = getMeth(bs,type="smooth",what="perBase")
+cov.tot = getCoverage(bs,type="Cov",what="perBase")
+bs.gr=granges(bs)
+rm(bs);gc()
 
-# get average per phenotype
-meth.pheno=meth.gather%>%
-    group_by(seqnames,start,pheno,gloc)%>%
-    summarize(meanmeth=mean(meth),
-              methstdev=sd(meth))
+# overlaps
+meth.ovl=findOverlaps(bs.gr,region.gr)
+dmr.ovl=findOverlaps(dmrs.gr,region.gr)
 
-##overlap methylation on candidate genes
-methovl=findOverlaps(candidate.gr,meth.gr)
-# overlap dmrs on candidate genes
-dmrovl=lapply(dmrs,function(x){findOverlaps(candidate.gr,x)})
-
-plt=lapply(seq_along(candidate.gr),function(i){
-    gene=candidate.gr[i]$ID
-    meth.ind=subjectHits(methovl)[which(queryHits(methovl)==i)]
-    meth.gr[meth.ind]})
-
-#colnames(genebody.plt)=colnames(cpg.plt)=c("pheno","samp","meth")
-genebody.plt$pheno=rep(pheno,each=dim(meth.g)[1])
-cpg.plt$pheno=rep(pheno,each=dim(meth.c)[1])
-colnames(genebody.plt)=colnames(cpg.plt)=c("samp","meth","pheno")
-cpg.sub=cpg.plt[sample(1:nrow(cpg.plt),500,replace=FALSE),]
-genebody.sub=genebody.plt[sample(1:nrow(genebody.plt),500,replace=FALSE),]
-g.body.box = ggplot(genebody.plt,aes(x=pheno,y=meth,group=samp,color=pheno))+
-    geom_boxplot(lwd=0.3,fatten=0.5,outlier.shape=NA)+
-    geom_jitter(data=genebody.sub,size=0.2,alpha=0.3)+
-    theme_bw()+theme(legend.position="none")+
-    labs(title="gene body",x="Phenotype","Methylation Frequency")
-g.cpg.box = ggplot(cpg.plt,aes(x=pheno,y=meth,group=samp,color=pheno))+
-    geom_boxplot(lwd=0.3,fatten=0.5,outlier.shape=NA)+
-    geom_jitter(data=cpg.sub,size=0.2,alpha=0.3)+
-    theme_bw()+theme(legend.position="none")+
-    labs(title="cpgi",x="Phenotype","Methylation Frequency")
-g.body.joy = ggplot(genebody.plt,aes(x=meth,y=pheno,group=samp,color=pheno))+
-    geom_joy(fill=NA)+theme_joy()+
-    theme_bw()+theme(legend.position="none")+
-    labs(title="gene body",x="Methylation Frequency",y="Phenotype")
-g.cpg.joy = ggplot(cpg.plt,aes(x=meth,y=pheno,group=samp,color=pheno))+
-    geom_joy(fill=NA)+theme_joy()+
-    theme_bw()+theme(legend.position="none")+
-    labs(title="cpgi",x="Methylation Frequency",y="Phenotype")
-
-pdf(file.path(plotdir,"globalMeth.pdf"),width=4,height=4)
-print(g.body.box)
-print(g.cpg.box)
-print(g.body.joy)
-print(g.cpg.joy)
+pdf(file.path(plotdir,"180127_candidates_methylation.pdf"),height=8,width=9)
+for (i in seq_along(region.gr)){
+    gene=as.tibble(genes.gr[i])%>%mutate(ID=paste0("Candidate gene : ",ID))
+    dmr.idx=queryHits(dmr.ovl)[which(subjectHits(dmr.ovl)==i)]
+    dmr.reg=dmrs[dmr.idx,]%>%mutate(ID=comp)
+    rectcols=c("start","end","ID")
+    chr=gene$seqnames[1]
+    # dataframe for plotting rectangles
+    rect.tb=bind_rows(gene[,rectcols],dmr.reg[,rectcols])
+    # methylation
+    meth.idx=queryHits(meth.ovl)[which(subjectHits(meth.ovl)==i)]
+    meth.loc=as.tibble(bs.gr[meth.idx])[,c("seqnames","start")]
+    meth=bind_cols(meth.loc,as.tibble(meth.tot[meth.idx,]))
+    meth.gather=meth%>%gather(sample,meth,3:14)
+    meth.gather$pheno=rep(pheno,each=dim(meth)[1])
+    # get average per phenotype
+    meth.pheno=meth.gather%>%
+        group_by(start,pheno)%>%
+        summarize(meanmeth=mean(meth),
+                  methstdev=sd(meth),
+                  methmin=min(meth),
+                  methmax=max(meth))
+    g=ggplot(data=meth.pheno,mapping=aes(x=start,y=meanmeth,color=pheno,group=pheno))+
+        geom_smooth(se=F,span=0.3,size=0.5)+geom_point(alpha=0.5,size=0.3)+
+        geom_rug(sides="b",alpha=0.3,color="black",size=0.5,position="jitter")+
+        geom_rect(inherit.aes=F,
+                  data=rect.tb,
+                  mapping=aes(xmin=start,xmax=end,ymin=0,ymax=1,fill=ID),
+                  alpha=0.3)+
+        ylim(c(0,1))+theme_bw()+
+        labs(title="Methylation",x=paste0("Coordinate on ",chr),y="Methylation Frequency")
+    # coverage
+    cov=bind_cols(meth.loc,as.tibble(cov.tot[meth.idx,]))
+    cov.gather=cov%>%gather(sample,cov,3:14)
+    cov.gather$pheno=rep(pheno,each=dim(cov)[1])
+    cov.pheno=cov.gather%>%group_by(start,pheno)%>%
+        summarize(meancov=mean(cov))
+    g.cov=ggplot(data=cov.pheno,mapping=aes(x=start,y=meancov,color=pheno,group=pheno))+
+        geom_smooth(se=F,span=0.3,size=0.5)+geom_point(alpha=0.5,size=0.3)+
+        geom_rug(sides="b",alpha=0.3,color="black",size=0.5,position="jitter")+
+        theme_bw()+labs(title="Coverage",x=paste0("Coordinate on ",chr),y="Coverage")
+    multiplot(g,g.cov)
+}
 dev.off()
