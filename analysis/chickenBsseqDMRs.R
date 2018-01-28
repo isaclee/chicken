@@ -41,6 +41,8 @@ if (T){
     save(file=file.path(rdadir,"blocks.rda"), list=c("blocks","tstat.blocks","combos"))
 }
 
+#load(file=file.path(rdadir,"dmrs.rda"))
+#load(file=file.path(rdadir,"dmrs.rda"))
 # export as other file types
 if (T){
     for (i in seq(dim(combos)[1])){
