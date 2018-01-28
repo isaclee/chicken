@@ -45,7 +45,7 @@ getTstats = function(bs,comp) {
     bs.meth=getMeth(bs.ind,type="smooth",what="perBase")
     keepi=which(rowSums(!is.na(bs.meth[,1:length(onei)]))>=2&
                 rowSums(!is.na(bs.meth[,(length(onei)+1):length(i)]>=2)))
-    bs.keep=bs[keepi,]
+    bs.keep=bs.ind[keepi,]
     # coverage - cov >0 on at least two replicates per sample
     bs.cov=getCoverage(bs.keep,type="Cov",what="perBase")
     keepi=which(rowSums(bs.cov[,1:length(onei)]>0)>=2 &
@@ -80,7 +80,7 @@ if (T) {
          file=file.path(rdadir,"tstats.rda"))
 }
 # plot
-if (F) {
+if (T) {
     pdf(file.path(plotdir, "180127_tplot.pdf"))
     for (i in 1:combonum)  {
         plot(tstat.blocks[[i]])
