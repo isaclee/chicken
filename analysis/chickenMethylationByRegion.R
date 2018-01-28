@@ -7,7 +7,7 @@ plotdir=file.path(outdir,"plots")
 datdir="/atium/Data/NGS/Aligned/170120_chicken"
 analysisdir=file.path(datdir,"analysis")
 rdadir=file.path(datdir,"rdas")
-beddir=file.path(datdir,"bed")
+beddir=file.path(datdir,"export")
 candidatedir=file.path(datdir,"genes")
 ##annotation
 cpganno="/atium/Data/Reference/chicken/galGal5/annotation/cpgIslandExt.txt.gz"
@@ -80,16 +80,14 @@ region.gr=txregion.gr[region.idx]
 genes.gr=tx.gr[region.idx]
 
 # load dmr bed files
-dmrfh=system(paste("find",beddir,"-type f"),intern=T)
-dmrlabs=sapply(strsplit(sapply(strsplit(dmrfh,"/"),"[[",8),"_"),"[[",1)
+dmrfh=system(paste("find",beddir,"-type f","-name *dmrs*"),intern=T)
+dmrlabs=sapply(strsplit(sapply(strsplit(dmrfh,"/"),"[[",8),".dmrs.tsv"),"[[",1)
 dmrcomp=as.tibble(do.call(rbind,strsplit(dmrlabs,".v.")))
 names(dmrcomp)=c("one","two")
 dmrcomp$lab=dmrlabs
-cnames=c("chr","start","end","score","strand")
 dmr.list=lapply(dmrfh,function(x){
-    y=read_tsv(x,col_names=F,skip=1)[,1:5]
-    names(y)=cnames
-    y$comp=strsplit(basename(x),"_")[[1]][1];y})
+    y=read_tsv(x)
+    y$comp=strsplit(basename(x),".dmrs.tsv")[[1]][1];y})
 dmrs=do.call(rbind,dmr.list)
 dmrs.gr=GRanges(dmrs)
 
@@ -112,14 +110,18 @@ meth.ovl=findOverlaps(bs.gr,region.gr)
 dmr.ovl=findOverlaps(dmrs.gr,region.gr)
 
 pdf(file.path(plotdir,"180127_candidates_methylation.pdf"),height=8,width=9)
+#png(file.path(plotdir,"180127_candidates_methylation.png"))
 for (i in seq_along(region.gr)){
     gene=as.tibble(genes.gr[i])%>%mutate(ID=paste0("Candidate gene : ",ID))
     dmr.idx=queryHits(dmr.ovl)[which(subjectHits(dmr.ovl)==i)]
-    dmr.reg=dmrs[dmr.idx,]%>%mutate(ID=comp)
+    dmr.reg=dmrs[dmr.idx,]%>%mutate(ID=comp)%>%arrange(desc(abs(areaStat)))
+    write_tsv(x=dmr.reg,
+              path=file.path(analysisdir,paste0(genes.gr[i]$ID,".dmrs.tsv")))
     rectcols=c("start","end","ID")
+    dmr.sig=dmr.reg%>%top_n(5,wt=abs(areaStat))
     chr=gene$seqnames[1]
     # dataframe for plotting rectangles
-    rect.tb=bind_rows(gene[,rectcols],dmr.reg[,rectcols])
+    rect.tb=bind_rows(gene[,rectcols],dmr.sig[,rectcols])
     # methylation
     meth.idx=queryHits(meth.ovl)[which(subjectHits(meth.ovl)==i)]
     meth.loc=as.tibble(bs.gr[meth.idx])[,c("seqnames","start")]
