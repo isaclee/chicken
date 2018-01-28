@@ -1,19 +1,17 @@
 #!/usr/bin/Rscript
 ##Plots go here:
-outdir="/home/isac/Dropbox/Data/Genetics/MethSeq/170120_chicken"
-plotdir=file.path(outdir,"plots")
+#outdir="/home/isac/Dropbox/Data/Genetics/MethSeq/170120_chicken"
+#plotdir=file.path(outdir,"plots")
 
 ##All alignment data lives here 
 datdir="/atium/Data/NGS/Aligned/170120_chicken"
 analysisdir=file.path(datdir,"analysis")
 rdadir=file.path(datdir,"rdas")
+plotdir=file.path(datdir,"plots")
 ##Load libraries and sources
 library(tidyverse)
 require(bsseq)
-require(reshape2)
 require(GenomicRanges)
-source("~/Code/timp_genetics/util/timp_seqtools.R")
-source("~/Code/timp_genetics/util/read_tools.R")
 
 library(parallel)
 
@@ -31,31 +29,34 @@ if (T) {
     combos$label=paste(combos$one, combos$two, sep=".v.")
     
 }
-### for test, subset data
-n=100000
-bismark.sub=bismark[1:n]
-bs.small.sub=BS.fit.small[1:n]
-bs.large.sub=BS.fit.large[1:n]
 
-getTstats = function(bs,index,comp) {    
+getTstats = function(bs,comp) {    
     one=as.character(comp[1])
     two=as.character(comp[2])
     ## get the index of comparing samples
-    onei=which(index==one)
-    twoi=which(index==two)
+    pheno=pData(bs)$pheno
+    onei=which(pheno==one)
+    twoi=which(pheno==two)
     i=c(onei,twoi)
     ##subset bs object
     bs.ind=bs[,i]
     ##only use loci with data
-    bs.cov=getCoverage(bs.ind,type="Cov",what="perBase")
-    keepi=which(rowSums(bs.cov>0)==length(i))
-    bs.comp=bs.ind[keepi,]
+    # first smothed methylation data exists on at least 2 samples
+    bs.meth=getMeth(bs.ind,type="smooth",what="perBase")
+    keepi=which(rowSums(!is.na(bs.meth[,1:length(onei)]))>=2&
+                rowSums(!is.na(bs.meth[,(length(onei)+1):length(i)]>=2)))
+    bs.keep=bs[keepi,]
+    # coverage - cov >0 on at least two replicates per sample
+    bs.cov=getCoverage(bs.keep,type="Cov",what="perBase")
+    keepi=which(rowSums(bs.cov[,1:length(onei)]>0)>=2 &
+                rowSums(bs.cov[,(length(onei)+1):length(i)]>0)>=2)
+    bs.comp=bs.keep[keepi,]
     ##calculate tstatistics
     tstat=BSmooth.tstat(bs.comp,
                          group1=1:length(onei),
                          group2=(length(onei)+1):length(i),
                          estimate.var="same",
-                         local.correct=F,
+                         local.correct=T,
                          verbose=T,
                         mc.cores=6)
     tstat
@@ -65,22 +66,27 @@ getTstats = function(bs,index,comp) {
 ##get tstatistics for all comparisons
 if (T) {
     combonum=dim(combos)[1]
-    pheno=pData(bismark)$pheno
-
     tstat.dmrs=lapply(seq(1,combonum),
                       FUN=function(x){
-                          getTstats(BS.fit.small,pheno,combos[x,])})
+                          getTstats(BS.fit.small,combos[x,])})
     tstat.blocks=lapply(seq(1,combonum),
                       FUN=function(x){
-                          getTstats(BS.fit.large,pheno,combos[x,])})
-    save(list=c("tstat.dmrs","tstat.blocks"),
+                          getTstats(BS.fit.large,combos[x,])})
+}
+
+# save
+if (T) {
+    save(list=c("tstat.dmrs","tstat.blocks","combos"),
          file=file.path(rdadir,"tstats.rda"))
+}
+# plot
+if (F) {
+    pdf(file.path(plotdir, "180127_tplot.pdf"))
     for (i in 1:combonum)  {
-        pdf(file.path(plotdir, paste0(combos$label[i], "_tplot.pdf")))
-        plot(density(as.numeric(getStats(tstat.blocks[[i]])[,5]),na.rm=T))
-        abline(v=c(-2.75, 2.75))
-        plot(density(as.numeric(getStats(tstat.dmrs[[i]])[,5]),na.rm=T))
-        abline(v=c(-2.75, 2.75))
-        dev.off()
+        plot(tstat.blocks[[i]])
+        title(main=paste0(combos$label[i],"_blocks"))
+        plot(tstat.dmrs[[i]])
+        title(main=paste0(combos$label[i],"_dmrs"))
     }
+    dev.off()
 }
