@@ -1,5 +1,5 @@
 #!/usr/bin/Rscript
-##Plots go here:
+# ensembl has the highest number of annotated genes
 
 ##Refgene txt file
 outdir="/mithril/Data/NGS/Reference/chicken5"
