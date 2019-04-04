@@ -42,20 +42,22 @@ rule bismark_align_pe:
 	input:
 		R1="{dir}/fastq_trimmed/{sample}_R1_val_1.fq.gz",
 		R2="{dir}/fastq_trimmed/{sample}_R2_val_2.fq.gz",
-		ref=directory(os.path.dirname(config['reference'])),
-		bsrefdir=directory(os.path.dirname(config['reference'])+"/Bisulfite_Genome"),
+		ref=os.path.dirname(config['reference']),
+		bsrefdir=os.path.dirname(config['reference'])+"/Bisulfite_Genome",
 	output:
-		"{dir}/bismark/{sample}.pe.bam"
+		"{dir}/bismark/{sample}_R1_val_1_bismark_bt2_pe.bam"
 	threads:
 		maxthreads
 	params:
-		int(maxthreads/4)
+		p=int(maxthreads/4),
+		tmpdir="{dir}/tmp/{sample}"
 	log:
 		"{dir}/bismark/{sample}.align.log"
 	shell:
+		"[ -e {params.tmpdir} ]||mkdir -p {params.tmpdir} && "
 		"bismark --bam --non_directional --bowtie2 "
-		"-p {params} --genome {input.ref} "
+		"-p {params.p} --genome {input.ref} "
 		"-1 {input.R1} -2 {input.R2} "
-		"--temp_dir {wildcards.dir}/tmp_{wildcards.sample} "
+		"--temp_dir {params.tmpdir} "
 		"--output_dir {wildcards.dir}/bismark &> {log} && "
 		"touch {output}"
