@@ -22,5 +22,5 @@ rule parse_bsseq:
 
 rule parse_rnaseq:
 	input:
-		expand("rnaseq/fastq_trimmed/{sample}_R1_val_1.fq.gz",
+		expand("rnaseq/bam/{sample}.sorted.bam",
 			sample=samples_tb['sample'])
