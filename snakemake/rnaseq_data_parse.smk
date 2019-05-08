@@ -41,6 +41,4 @@ rule rna_align_hisat2:
 		"hisat2 -p {threads} -x {params} "
 		"-1 {input.r1} -2 {input.r2} 2> {log} | "
 		"samtools view -bh - | "
-		"samtools sort - > {output}"
-
-
+		"samtools sort -@ {threads} - > {output}"
