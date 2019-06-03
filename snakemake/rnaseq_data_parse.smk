@@ -24,6 +24,24 @@ rule rna_trim_fastq_pe:
 		"-o rnaseq/fastq_trimmed &> {log} && "
 		"touch {output}"
 
+rule rna_quantify_rna_salmon:
+	input:
+		r1 = "rnaseq/fastq_trimmed/{sample}_R1_val_1.fq.gz",
+		r2 = "rnaseq/fastq_trimmed/{sample}_R2_val_2.fq.gz"
+	output:
+		directory("rnaseq/quants/{sample}_quant")
+	params:
+		config['salmon_index']
+	threads:
+		maxthreads
+	log:
+		"rnaseq/quants/{sample}_quant.log"
+	shell:
+		"salmon quant -i {params} -l A -p {threads} "
+		"-1 {input.r1} -2 {input.r2} "
+		"--validateMappings -o {output} &> {log} && "
+		"touch {output} "
+
 rule rna_align_hisat2:
 	input:
 		r1="rnaseq/fastq_trimmed/{sample}_R1_val_1.fq.gz",
