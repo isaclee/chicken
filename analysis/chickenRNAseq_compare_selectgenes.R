@@ -42,3 +42,5 @@ genes = read_tsv(names.fp,col_names=cnames)
 dat.select = dat.spread[match(genes$ensembl,dat.spread$ensembl),] %>%
   mutate(gene = genes$gene)
 dat.select[which(genes$gene == "LRIT1"),]
+
+# deseq analysis ####
