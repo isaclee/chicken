@@ -12,7 +12,7 @@ gunzip -c $gtf | awk -v b=$biotype 'OFS="\t"{
       { idind=index($0,"transcript_id");
         id=substr($0,idind+15,20);
         gn=substr($0,idx+17,20);
-        print substr(id,0,index(id,"\"")-1),substr(gn,0,index(gn,"\"")-1) 
+        print substr(id,0,index(id,"\"")-1),substr(gn,0,index(gn,"-20")-1) 
       }
     }
   }' > $out

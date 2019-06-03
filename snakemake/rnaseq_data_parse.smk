@@ -29,7 +29,7 @@ rule rna_quantify_rna_salmon:
 		r1 = "rnaseq/fastq_trimmed/{sample}_R1_val_1.fq.gz",
 		r2 = "rnaseq/fastq_trimmed/{sample}_R2_val_2.fq.gz"
 	output:
-		directory("rnaseq/quants/{sample}_quant")
+		"rnaseq/quants/{sample}_quant/quant.sf"
 	params:
 		config['salmon_index']
 	threads:
@@ -39,7 +39,7 @@ rule rna_quantify_rna_salmon:
 	shell:
 		"salmon quant -i {params} -l A -p {threads} "
 		"-1 {input.r1} -2 {input.r2} "
-		"--validateMappings -o {output} &> {log} && "
+		"--validateMappings -o rnaseq/quants/{wildcards.sample}_quant &> {log} && "
 		"touch {output} "
 
 rule rna_align_hisat2:

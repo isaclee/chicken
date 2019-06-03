@@ -22,5 +22,5 @@ rule parse_bsseq:
 
 rule parse_rnaseq:
 	input:
-		expand("rnaseq/quants/{sample}_quant",
+		expand("rnaseq/quants/{sample}_quant/quant.sf",
 			sample=samples_tb['sample'])
